@@ -45,8 +45,7 @@ const characters: Character[] = [
       habitat: "city",
       intelligence: "high",
       bravery: "high",
-      gender: "male",
-      glasses: "yes"
+      gender: "male"
     }
   },
   {
