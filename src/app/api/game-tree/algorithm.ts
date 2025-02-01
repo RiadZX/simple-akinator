@@ -7,8 +7,8 @@ const characters: Character[] = [
   {
     name: "SpongeBob SquarePants",
     attributes: {
-      species: "other",
-      clothes: "shirt",
+      species: "animal",
+      clothes: "full",
       habitat: "underwater",
       intelligence: "high",
       bravery: "high",
@@ -18,7 +18,7 @@ const characters: Character[] = [
   {
     name: "Patrick Star",
     attributes: {
-      species: "other",
+      species: "animal",
       clothes: "shorts",
       habitat: "underwater",
       intelligence: "low",
@@ -29,7 +29,7 @@ const characters: Character[] = [
   {
     name: "Squidward Tentacles",
     attributes: {
-      species: "other",
+      species: "animal",
       clothes: "shirt",
       habitat: "underwater",
       intelligence: "high",
@@ -41,8 +41,8 @@ const characters: Character[] = [
     name: "Phineas Flynn",
     attributes: {
       species: "human",
-      clothes: "shirt",
-      habitat: "suburban",
+      clothes: "full",
+      habitat: "city",
       intelligence: "high",
       bravery: "high",
       gender: "male"
@@ -52,8 +52,8 @@ const characters: Character[] = [
     name: "Ferb Fletcher",
     attributes: {
       species: "human",
-      clothes: "shirt",
-      habitat: "suburban",
+      clothes: "full",
+      habitat: "city",
       intelligence: "high",
       bravery: "high",
       gender: "male"
@@ -64,7 +64,7 @@ const characters: Character[] = [
     attributes: {
       species: "animal",
       clothes: "hat",
-      habitat: "suburban",
+      habitat: "city",
       intelligence: "high",
       bravery: "high",
       gender: "male"
@@ -75,7 +75,7 @@ const characters: Character[] = [
     attributes: {
       species: "animal",
       clothes: "shorts",
-      habitat: "urban",
+      habitat: "city",
       intelligence: "high",
       bravery: "high",
       gender: "male"
@@ -86,7 +86,7 @@ const characters: Character[] = [
     attributes: {
       species: "animal",
       clothes: "shirt",
-      habitat: "urban",
+      habitat: "city",
       intelligence: "medium",
       bravery: "medium",
       gender: "male"
@@ -96,8 +96,8 @@ const characters: Character[] = [
     name: "Goofy",
     attributes: {
       species: "animal",
-      clothes: "shirt",
-      habitat: "urban",
+      clothes: "full",
+      habitat: "city",
       intelligence: "low",
       bravery: "medium",
       gender: "male"
@@ -108,7 +108,7 @@ const characters: Character[] = [
     attributes: {
       species: "animal",
       clothes: "none",
-      habitat: "house",
+      habitat: "city",
       intelligence: "medium",
       bravery: "medium",
       gender: "male"
@@ -119,7 +119,7 @@ const characters: Character[] = [
     attributes: {
       species: "animal",
       clothes: "none",
-      habitat: "house",
+      habitat: "city",
       intelligence: "high",
       bravery: "high",
       gender: "male"
@@ -152,7 +152,7 @@ const characters: Character[] = [
     attributes: {
       species: "animal",
       clothes: "collar",
-      habitat: "various",
+      habitat: "city",
       intelligence: "low",
       bravery: "low",
       gender: "male"
@@ -162,8 +162,8 @@ const characters: Character[] = [
     name: "Shaggy Rogers",
     attributes: {
       species: "human",
-      clothes: "shirt",
-      habitat: "various",
+      clothes: "full",
+      habitat: "city",
       intelligence: "low",
       bravery: "low",
       gender: "male"

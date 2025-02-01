@@ -29,6 +29,7 @@ export default function AkinatorGame() {
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [loadedCharacters, setLoadedCharacters] = useState<Character[] | null>(null);
+  const [newCharacter, setNewCharacter] = useState<Character | null>(null);
 
   useEffect(() => {
     fetchCharacters();
@@ -54,7 +55,7 @@ export default function AkinatorGame() {
       } else if (filtered.length === 0) {
         setNoMatch(true);
         setGameOver(true);
-      } else if (filtered.length > 1 && new Set(filtered.map(character => character.attributes[bestFeature])).size === 1) {
+      } else if (filtered.length > 1 && filtered.every(character => JSON.stringify(character.attributes) === JSON.stringify(filtered[0].attributes))) {
         setGameOver(true);
         setNoMatch(true);
         setCurrentNode({
@@ -148,6 +149,21 @@ export default function AkinatorGame() {
           [e.target.name]: e.target.value
         }
       });
+    } else if (newCharacter) {
+      setNewCharacter({
+        ...newCharacter,
+        attributes: {
+          ...newCharacter.attributes,
+          [e.target.name]: e.target.value
+        }
+      });
+    }
+  };
+
+  const handleAddNewCharacter = () => {
+    if (newCharacter) {
+      addCharacter(newCharacter);
+      setNewCharacter(null);
     }
   };
 
@@ -266,6 +282,78 @@ export default function AkinatorGame() {
           </div>
         </div>
       )}
+      {newCharacter && (
+        <div className="w-full max-w-md bg-gray-800 border-gray-700 shadow-xl p-4 mb-4">
+          <h2 className="text-xl font-bold text-center text-white">Add New Character</h2>
+          <div className="space-y-4">
+            <input
+              type="text"
+              name="name"
+              value={newCharacter.name}
+              onChange={(e) => setNewCharacter({ ...newCharacter, name: e.target.value })}
+              placeholder="Name"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <input
+              type="text"
+              name="species"
+              value={newCharacter.attributes.species}
+              onChange={handleChange}
+              placeholder="Species"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <input
+              type="text"
+              name="clothes"
+              value={newCharacter.attributes.clothes}
+              onChange={handleChange}
+              placeholder="Clothes"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <input
+              type="text"
+              name="habitat"
+              value={newCharacter.attributes.habitat}
+              onChange={handleChange}
+              placeholder="Habitat"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <input
+              type="text"
+              name="intelligence"
+              value={newCharacter.attributes.intelligence}
+              onChange={handleChange}
+              placeholder="Intelligence"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <input
+              type="text"
+              name="bravery"
+              value={newCharacter.attributes.bravery}
+              onChange={handleChange}
+              placeholder="Bravery"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <input
+              type="text"
+              name="gender"
+              value={newCharacter.attributes.gender}
+              onChange={handleChange}
+              placeholder="Gender"
+              className="w-full p-2 bg-gray-700 text-white"
+            />
+            <Button onClick={handleAddNewCharacter} className="w-full bg-neon-green hover:bg-neon-green/80 text-black font-semibold">
+              Add
+            </Button>
+          </div>
+        </div>
+      )}
+      <Button onClick={() => setNewCharacter({ name: '', attributes: { species: '', clothes: '', habitat: '', intelligence: '', bravery: '', gender: '' } })} className="mb-4">
+        Add New Character
+      </Button>
+      <Button onClick={resetGame} className="mb-4">
+        Reset Game
+      </Button>
       <Card className="w-full max-w-md bg-gray-800 border-gray-700 shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
