@@ -359,7 +359,7 @@ export default function AkinatorGame() {
           <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
             Akinator
           </CardTitle>
-          <CardDescription className="text-center text-gray-400">Guess the character!</CardDescription>
+          <CardDescription className="text-center text-gray-400">I will try to predict your character (from the table above)</CardDescription>
         </CardHeader>
         <CardContent>
           {gameOver ? (
@@ -420,6 +420,11 @@ export default function AkinatorGame() {
           ))}
         </ul>
       </div>
+      <footer className="w-full max-w-md bg-gray-800 border-gray-700 shadow-xl p-4 mt-4 text-center text-white">
+        <a href="https://github.com/riadzx/simple-akinator" target="_blank" rel="noopener noreferrer">
+          View on GitHub
+        </a>
+      </footer>
     </div>
   )
 }
