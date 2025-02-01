@@ -33,7 +33,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
-      <html lang="en" className="dark">
+      <html lang="en" className="dark" suppressHydrationWarning>
         <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <div className="relative flex min-h-screen flex-col">

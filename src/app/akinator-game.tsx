@@ -1,24 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { useState, useEffect, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { getBestSplitFeature } from './api/game-tree/utils';
 
-export type GameNode =
-  | {
-      feature: string
-      children: { [key: string]: GameNode }
-    }
-  | { character: string }
-
-export type Character = {
+interface Character {
   name: string;
-  attributes: { [key: string]: string }
+  attributes: Record<string, string>;
 }
 
+type GameNode = { character: string } | { message: string };
+
 export default function AkinatorGame() {
-  const [currentNode, setCurrentNode] = useState<GameNode | null>(null)
+  const [currentNode, setCurrentNode] = useState<GameNode | null>(null);
   const [gameOver, setGameOver] = useState(false)
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -31,17 +26,13 @@ export default function AkinatorGame() {
   const [loadedCharacters, setLoadedCharacters] = useState<Character[] | null>(null);
   const [newCharacter, setNewCharacter] = useState<Character | null>(null);
 
-  useEffect(() => {
-    fetchCharacters();
-  }, []);
-
-  const fetchCharacters = async () => {
-    const response = await fetch('/api/game-tree');
-    const data = await response.json();
-    setCharacters(data);
-    setFilteredCharacters(data);
-    setBestFeature(getBestSplitFeature(data));
-  };
+  const uniqueAttributes = useMemo(() => {
+    const attributes = new Set<string>();
+    characters.forEach(character => {
+      Object.keys(character.attributes).forEach(attribute => attributes.add(attribute));
+    });
+    return Array.from(attributes);
+  }, [characters]);
 
   const handleChoice = (choice: string) => {
     if (filteredCharacters.length) {
@@ -167,11 +158,30 @@ export default function AkinatorGame() {
     }
   };
 
+  const uniqueChoices = useMemo(() => {
+    if (!bestFeature) return [];
+    const choices = new Set<string>();
+    filteredCharacters.forEach(character => {
+      choices.add(character.attributes[bestFeature]);
+    });
+    return Array.from(choices);
+  }, [filteredCharacters, bestFeature]);
+
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      const response = await fetch('/api/game-tree');
+      const data = await response.json();
+      setCharacters(data);
+      setFilteredCharacters(data);
+      setBestFeature(getBestSplitFeature(data));
+    };
+
+    fetchCharacters();
+  }, []);
+
   if (!characters.length) {
     return <div>Loading...</div>
   }
-
-  const uniqueChoices = Array.from(new Set(filteredCharacters.map(character => character.attributes[bestFeature])));
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4 space-y-8">
@@ -185,12 +195,9 @@ export default function AkinatorGame() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Species</th>
-                <th>Clothes</th>
-                <th>Habitat</th>
-                <th>Intelligence</th>
-                <th>Bravery</th>
-                <th>Gender</th>
+                {uniqueAttributes.map((attribute) => (
+                  <th key={attribute}>{attribute}</th>
+                ))}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -198,12 +205,9 @@ export default function AkinatorGame() {
               {characters.map((character, index) => (
                 <tr key={index}>
                   <td>{character.name}</td>
-                  <td>{character.attributes.species}</td>
-                  <td>{character.attributes.clothes}</td>
-                  <td>{character.attributes.habitat}</td>
-                  <td>{character.attributes.intelligence}</td>
-                  <td>{character.attributes.bravery}</td>
-                  <td>{character.attributes.gender}</td>
+                  {uniqueAttributes.map((attribute) => (
+                    <td key={attribute}>{character.attributes[attribute]}</td>
+                  ))}
                   <td>
                     <Button onClick={() => handleEditCharacter(index)}>Edit</Button>
                     <Button onClick={() => deleteCharacter(index)}>Delete</Button>
@@ -228,54 +232,17 @@ export default function AkinatorGame() {
               placeholder="Name"
               className="w-full p-2 bg-gray-700 text-white"
             />
-            <input
-              type="text"
-              name="species"
-              value={editingCharacter.attributes.species}
-              onChange={handleChange}
-              placeholder="Species"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="clothes"
-              value={editingCharacter.attributes.clothes}
-              onChange={handleChange}
-              placeholder="Clothes"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="habitat"
-              value={editingCharacter.attributes.habitat}
-              onChange={handleChange}
-              placeholder="Habitat"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="intelligence"
-              value={editingCharacter.attributes.intelligence}
-              onChange={handleChange}
-              placeholder="Intelligence"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="bravery"
-              value={editingCharacter.attributes.bravery}
-              onChange={handleChange}
-              placeholder="Bravery"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="gender"
-              value={editingCharacter.attributes.gender}
-              onChange={handleChange}
-              placeholder="Gender"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
+            {uniqueAttributes.map((attribute) => (
+              <input
+                key={attribute}
+                type="text"
+                name={attribute}
+                value={editingCharacter.attributes[attribute]}
+                onChange={handleChange}
+                placeholder={attribute}
+                className="w-full p-2 bg-gray-700 text-white"
+              />
+            ))}
             <Button onClick={handleSaveCharacter} className="w-full bg-neon-green hover:bg-neon-green/80 text-black font-semibold">
               Save
             </Button>
@@ -294,61 +261,24 @@ export default function AkinatorGame() {
               placeholder="Name"
               className="w-full p-2 bg-gray-700 text-white"
             />
-            <input
-              type="text"
-              name="species"
-              value={newCharacter.attributes.species}
-              onChange={handleChange}
-              placeholder="Species"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="clothes"
-              value={newCharacter.attributes.clothes}
-              onChange={handleChange}
-              placeholder="Clothes"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="habitat"
-              value={newCharacter.attributes.habitat}
-              onChange={handleChange}
-              placeholder="Habitat"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="intelligence"
-              value={newCharacter.attributes.intelligence}
-              onChange={handleChange}
-              placeholder="Intelligence"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="bravery"
-              value={newCharacter.attributes.bravery}
-              onChange={handleChange}
-              placeholder="Bravery"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="gender"
-              value={newCharacter.attributes.gender}
-              onChange={handleChange}
-              placeholder="Gender"
-              className="w-full p-2 bg-gray-700 text-white"
-            />
+            {uniqueAttributes.map((attribute) => (
+              <input
+                key={attribute}
+                type="text"
+                name={attribute}
+                value={newCharacter.attributes[attribute] || ''}
+                onChange={handleChange}
+                placeholder={attribute}
+                className="w-full p-2 bg-gray-700 text-white"
+              />
+            ))}
             <Button onClick={handleAddNewCharacter} className="w-full bg-neon-green hover:bg-neon-green/80 text-black font-semibold">
               Add
             </Button>
           </div>
         </div>
       )}
-      <Button onClick={() => setNewCharacter({ name: '', attributes: { species: '', clothes: '', habitat: '', intelligence: '', bravery: '', gender: '' } })} className="mb-4">
+      <Button onClick={() => setNewCharacter({ name: '', attributes: uniqueAttributes.reduce((acc, attr) => ({ ...acc, [attr]: '' }), {}) })} className="mb-4">
         Add New Character
       </Button>
       <Button onClick={resetGame} className="mb-4">
@@ -391,11 +321,7 @@ export default function AkinatorGame() {
         <CardFooter className="flex flex-wrap justify-center gap-3">
           {!gameOver &&
             uniqueChoices.map((choice, index) => (
-              <Button
-                key={index}
-                onClick={() => handleChoice(choice)}
-                className={`bg-neon-green hover:bg-neon-purple/80 text-black font-semibold`}
-              >
+              <Button key={index} onClick={() => handleChoice(choice)} className={`bg-neon-green hover:bg-neon-purple/80 text-black font-semibold`}>
                 {choice}
               </Button>
             ))}
@@ -426,5 +352,5 @@ export default function AkinatorGame() {
         </a>
       </footer>
     </div>
-  )
+  );
 }
